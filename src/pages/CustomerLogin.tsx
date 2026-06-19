@@ -11,6 +11,8 @@ import { ArrowLeft, LogIn } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import { ensureCustomerProfileFromUser } from "@/lib/customer-profile";
 import { formatAuthError } from "@/lib/supabase-env";
+import { isDemoMode } from "@/lib/demo-mode";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const CustomerLogin = () => {
   const navigate = useNavigate();
@@ -89,6 +91,14 @@ const CustomerLogin = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {isDemoMode() && (
+              <Alert className="mb-6 border-amber-500/40 bg-amber-50 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
+                <AlertTitle>Preview mode</AlertTitle>
+                <AlertDescription>
+                  Sign-in is disabled until Supabase is connected. Browse the catalogue from the home page.
+                </AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="login-email">Email</Label>
@@ -115,7 +125,7 @@ const CustomerLogin = () => {
               <Button
                 type="submit"
                 className="w-full bg-navira-red hover:bg-navira-red/90 text-white"
-                disabled={submitting}
+                disabled={submitting || isDemoMode()}
               >
                 {submitting ? "Signing in..." : "Sign in"}
               </Button>

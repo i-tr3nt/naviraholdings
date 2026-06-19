@@ -14,7 +14,8 @@ import {
   validateSignupForm,
   type CustomerSignupFormState,
 } from "@/components/shop/CustomerSignupForm";
-import { formatAuthError, getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase-env";
+import { formatAuthError, getSupabaseConfig } from "@/lib/supabase-env";
+import { isDemoMode } from "@/lib/demo-mode";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const CustomerRegister = () => {
@@ -24,13 +25,10 @@ const CustomerRegister = () => {
   const { toast } = useToast();
   const [form, setForm] = useState<CustomerSignupFormState>(emptySignupForm());
   const [submitting, setSubmitting] = useState(false);
-  const [connectionOk, setConnectionOk] = useState<boolean | null>(null);
+  const [connectionOk, setConnectionOk] = useState<boolean | null>(isDemoMode() ? false : null);
 
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setConnectionOk(false);
-      return;
-    }
+    if (isDemoMode()) return;
     const { url, key } = getSupabaseConfig();
     fetch(`${url}/auth/v1/health`, { headers: { apikey: key } })
       .then((r) => setConnectionOk(r.ok))
@@ -117,7 +115,16 @@ const CustomerRegister = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {connectionOk === false && (
+            {isDemoMode() && (
+              <Alert className="mb-6 border-amber-500/40 bg-amber-50 text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
+                <AlertTitle>Preview mode</AlertTitle>
+                <AlertDescription>
+                  Account registration is disabled until Supabase is connected. You can still browse the
+                  catalogue and add items to your cart.
+                </AlertDescription>
+              </Alert>
+            )}
+            {!isDemoMode() && connectionOk === false && (
               <Alert variant="destructive" className="mb-6">
                 <AlertTitle>Cannot connect to Supabase</AlertTitle>
                 <AlertDescription>
@@ -135,7 +142,7 @@ const CustomerRegister = () => {
               <Button
                 type="submit"
                 className="w-full bg-navira-red hover:bg-navira-red/90 text-white"
-                disabled={submitting || connectionOk === false}
+                disabled={submitting || isDemoMode() || connectionOk === false}
               >
                 {submitting ? "Creating account..." : "Create account"}
               </Button>

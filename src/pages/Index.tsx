@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { isDemoMode } from "@/lib/demo-mode";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import BrandLogo from "@/components/BrandLogo";
@@ -42,6 +43,7 @@ const Index = () => {
   const [company, setCompany] = useState<CompanyContactRow | null>(null);
 
   useEffect(() => {
+    if (isDemoMode()) return;
     supabase
       .from("company_info")
       .select("*")

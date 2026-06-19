@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { isDemoMode } from "@/lib/demo-mode";
 
 type RequireShopLoginProps = {
   children: React.ReactNode;
@@ -9,9 +10,12 @@ type RequireShopLoginProps = {
 /** Gate for /shop (Shop online) — catalog and departments stay public. */
 export function RequireShopLogin({ children }: RequireShopLoginProps) {
   const location = useLocation();
-  const [allowed, setAllowed] = useState<boolean | null>(null);
+  const demo = isDemoMode();
+  const [allowed, setAllowed] = useState<boolean | null>(demo ? true : null);
 
   useEffect(() => {
+    if (demo) return;
+
     const check = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setAllowed(!!session);
@@ -23,7 +27,11 @@ export function RequireShopLogin({ children }: RequireShopLoginProps) {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [demo]);
+
+  if (demo) {
+    return <>{children}</>;
+  }
 
   if (allowed === null) {
     return (

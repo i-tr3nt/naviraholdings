@@ -26,7 +26,7 @@ import AdminCompanySettings from "./pages/AdminCompanySettings";
 import Returns from "./pages/Returns";
 import NotFound from "./pages/NotFound";
 import { RequireShopLogin } from "./components/shop/RequireShopLogin";
-import { ConfigGate } from "./components/ConfigGate";
+import { DemoModeBanner } from "./components/DemoModeBanner";
 
 const queryClient = new QueryClient();
 
@@ -34,10 +34,10 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="system" storageKey="navira-theme">
       <TooltipProvider>
-        <ConfigGate>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <DemoModeBanner />
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
@@ -69,8 +69,7 @@ const App = () => (
             <Route path="/returns" element={<Returns />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          </BrowserRouter>
-        </ConfigGate>
+        </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>

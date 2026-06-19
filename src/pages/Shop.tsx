@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchShopInventory } from "@/lib/shop-inventory";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -48,18 +49,7 @@ const Shop = () => {
     setUser(session?.user ?? null);
   };
   const fetchProducts = async () => {
-    // Fetch products without requiring authentication
-    const {
-      data,
-      error
-    } = await supabase.from("inventory").select("id, item_name, item_code, description, category, quantity, unit_price, image_url").order("item_name");
-    if (error) {
-      console.error("Error fetching products:", error);
-      // Don't show error to users - products will display empty
-      setProducts([]);
-    } else {
-      setProducts(data || []);
-    }
+    setProducts(await fetchShopInventory());
   };
 
   const filteredProducts = useMemo(() => {

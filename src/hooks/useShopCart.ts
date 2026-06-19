@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
+import { isDemoMode } from "@/lib/demo-mode";
 import type { CartItem } from "@/components/ShoppingCart";
 import type { AddToCartPayload, AddCatalogToCartPayload } from "@/types/shop";
 import { catalogCartLineId, CATALOG_ITEM_CODE } from "@/lib/catalog-cart";
@@ -196,7 +196,7 @@ export function useShopCart() {
       });
       return;
     }
-    if (!isLoggedIn) {
+    if (!isLoggedIn && !isDemoMode()) {
       toast({
         title: "Sign in to place your order",
         description: "Browse freely — login is only needed when you check out.",

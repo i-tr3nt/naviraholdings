@@ -13,9 +13,8 @@ const FALLBACK_KEY =
 const configured = isSupabaseConfigured();
 
 if (!configured) {
-  console.error(
-    "[Supabase] Missing or invalid VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY at build time. " +
-      "Set them in Render Environment and redeploy with a fresh build."
+  console.info(
+    "[NAVIRA] Running in preview mode — Supabase env vars not set. Browse and sample products work; auth and orders are disabled."
   );
 }
 

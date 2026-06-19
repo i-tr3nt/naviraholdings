@@ -17,6 +17,7 @@ import {
   formatCustomerContact,
 } from "@/lib/customer-profile";
 import { CART_STORAGE_KEY, clearShopCartStorage } from "@/hooks/useShopCart";
+import { isDemoMode } from "@/lib/demo-mode";
 
 function loadCartFromSession(): CartItem[] {
   try {
@@ -61,6 +62,11 @@ const Checkout = () => {
 
   useEffect(() => {
     const init = async () => {
+      if (isDemoMode()) {
+        setAuthChecked(true);
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate(`/shop/login?redirect=${encodeURIComponent("/checkout")}`, {
@@ -117,6 +123,19 @@ const Checkout = () => {
     }
 
     setIsProcessing(true);
+
+    if (isDemoMode()) {
+      clearShopCartStorage();
+      toast({
+        title: "Preview order",
+        description: "Checkout is disabled in preview mode. Connect Supabase to place real orders.",
+      });
+      navigate("/order-confirmation", {
+        state: { orderNumber: "PREVIEW-001", demo: true },
+      });
+      setIsProcessing(false);
+      return;
+    }
 
     try {
       const { data: { user } } = await supabase.auth.getUser();

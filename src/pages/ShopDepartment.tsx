@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchShopInventory } from "@/lib/shop-inventory";
 import { ArrowLeft } from "lucide-react";
 import { ProductSearchBar } from "@/components/shop/ProductSearchBar";
 import { filterProductsBySearch, filterStringsBySearch, normalizeSearchQuery } from "@/lib/product-search";
@@ -45,12 +46,7 @@ const ShopDepartment = () => {
 
   const fetchProducts = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("inventory")
-      .select("id, item_name, item_code, description, category, quantity, unit_price, image_url")
-      .order("item_name");
-
-    setProducts(error ? [] : data || []);
+    setProducts(await fetchShopInventory());
     setLoading(false);
   };
 

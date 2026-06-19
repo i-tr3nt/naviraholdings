@@ -9,6 +9,9 @@ services:
         source: /*
         destination: /index.html
     envVars:
+      # Preview mode: site runs without Supabase until you add the vars below and redeploy.
+      - key: VITE_DEMO_MODE
+        value: "true"
       - key: VITE_SUPABASE_URL
         sync: false
       - key: VITE_SUPABASE_PUBLISHABLE_KEY
