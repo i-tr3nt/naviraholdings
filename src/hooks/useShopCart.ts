@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { isDemoMode } from "@/lib/demo-mode";
 import type { CartItem } from "@/components/ShoppingCart";
 import type { AddToCartPayload, AddCatalogToCartPayload } from "@/types/shop";
