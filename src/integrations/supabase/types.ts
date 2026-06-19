@@ -16,49 +16,94 @@ export type Database = {
     Tables: {
       company_info: {
         Row: {
+          accounts_email: string | null
           address: string | null
           cell_number: string | null
           city: string | null
           country: string | null
           email: string | null
+          general_email: string | null
           google_maps_url: string | null
           id: string
           landline: string | null
+          sales_email: string | null
           saturday_hours: string | null
           sunday_hours: string | null
           updated_at: string | null
           updated_by: string | null
           weekday_hours: string | null
+          whatsapp: string | null
         }
         Insert: {
+          accounts_email?: string | null
           address?: string | null
           cell_number?: string | null
           city?: string | null
           country?: string | null
           email?: string | null
+          general_email?: string | null
           google_maps_url?: string | null
           id?: string
           landline?: string | null
+          sales_email?: string | null
           saturday_hours?: string | null
           sunday_hours?: string | null
           updated_at?: string | null
           updated_by?: string | null
           weekday_hours?: string | null
+          whatsapp?: string | null
         }
         Update: {
+          accounts_email?: string | null
           address?: string | null
           cell_number?: string | null
           city?: string | null
           country?: string | null
           email?: string | null
+          general_email?: string | null
           google_maps_url?: string | null
           id?: string
           landline?: string | null
+          sales_email?: string | null
           saturday_hours?: string | null
           sunday_hours?: string | null
           updated_at?: string | null
           updated_by?: string | null
           weekday_hours?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      customer_profiles: {
+        Row: {
+          address_line: string
+          city: string
+          created_at: string
+          delivery_notes: string | null
+          full_name: string
+          phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_line: string
+          city?: string
+          created_at?: string
+          delivery_notes?: string | null
+          full_name: string
+          phone: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_line?: string
+          city?: string
+          created_at?: string
+          delivery_notes?: string | null
+          full_name?: string
+          phone?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -160,8 +205,10 @@ export type Database = {
       sale_items: {
         Row: {
           created_at: string | null
+          customer_notes: string | null
           id: string
-          inventory_id: string
+          inventory_id: string | null
+          is_catalog_line: boolean
           item_name: string
           quantity: number
           sale_id: string
@@ -170,8 +217,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          customer_notes?: string | null
           id?: string
-          inventory_id: string
+          inventory_id?: string | null
+          is_catalog_line?: boolean
           item_name: string
           quantity: number
           sale_id: string
@@ -180,8 +229,10 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          customer_notes?: string | null
           id?: string
-          inventory_id?: string
+          inventory_id?: string | null
+          is_catalog_line?: boolean
           item_name?: string
           quantity?: number
           sale_id?: string
@@ -209,7 +260,9 @@ export type Database = {
         Row: {
           created_at: string | null
           customer_contact: string | null
+          customer_email: string | null
           customer_name: string | null
+          delivery_address: string | null
           handled_at: string | null
           handled_by: string | null
           id: string
@@ -225,7 +278,9 @@ export type Database = {
         Insert: {
           created_at?: string | null
           customer_contact?: string | null
+          customer_email?: string | null
           customer_name?: string | null
+          delivery_address?: string | null
           handled_at?: string | null
           handled_by?: string | null
           id?: string
@@ -241,7 +296,9 @@ export type Database = {
         Update: {
           created_at?: string | null
           customer_contact?: string | null
+          customer_email?: string | null
           customer_name?: string | null
+          delivery_address?: string | null
           handled_at?: string | null
           handled_by?: string | null
           id?: string
@@ -283,6 +340,7 @@ export type Database = {
     }
     Functions: {
       generate_sale_number: { Args: never; Returns: string }
+      get_user_id_by_email: { Args: { _email: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

@@ -7,11 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Wrench, ArrowLeft, Save } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { NAVIRA_CONTACT } from "@/lib/company-contact";
 
-interface CompanyData {
+type CompanyForm = {
   id: string;
   email: string;
+  sales_email: string;
+  general_email: string;
+  accounts_email: string;
+  whatsapp: string;
   landline: string;
   cell_number: string;
   address: string;
@@ -21,24 +25,30 @@ interface CompanyData {
   weekday_hours: string;
   saturday_hours: string;
   sunday_hours: string;
-}
+};
+
+const defaultForm = (): CompanyForm => ({
+  id: "",
+  email: NAVIRA_CONTACT.salesEmail,
+  sales_email: NAVIRA_CONTACT.salesEmail,
+  general_email: NAVIRA_CONTACT.generalEmail,
+  accounts_email: NAVIRA_CONTACT.accountsEmail,
+  whatsapp: NAVIRA_CONTACT.whatsapp,
+  landline: NAVIRA_CONTACT.phone1,
+  cell_number: NAVIRA_CONTACT.phone2,
+  address: NAVIRA_CONTACT.address,
+  city: NAVIRA_CONTACT.city,
+  country: NAVIRA_CONTACT.country,
+  google_maps_url: "",
+  weekday_hours: "8:00 AM - 6:00 PM",
+  saturday_hours: "8:00 AM - 4:00 PM",
+  sunday_hours: "Closed",
+});
 
 const AdminCompanySettings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [companyData, setCompanyData] = useState<CompanyData>({
-    id: "",
-    email: "",
-    landline: "",
-    cell_number: "",
-    address: "",
-    city: "",
-    country: "",
-    google_maps_url: "",
-    weekday_hours: "8:00 AM - 6:00 PM",
-    saturday_hours: "8:00 AM - 4:00 PM",
-    sunday_hours: "Closed",
-  });
+  const [companyData, setCompanyData] = useState<CompanyForm>(defaultForm());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -72,15 +82,28 @@ const AdminCompanySettings = () => {
 
   const fetchCompanyInfo = async () => {
     try {
-      const { data, error } = await (supabase as any)
-        .from("company_info")
-        .select("*")
-        .limit(1)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      if (data) setCompanyData(data);
-    } catch (error: any) {
+      const { data, error } = await supabase.from("company_info").select("*").limit(1).maybeSingle();
+      if (error) throw error;
+      if (data) {
+        setCompanyData({
+          id: data.id,
+          email: data.email ?? NAVIRA_CONTACT.salesEmail,
+          sales_email: data.sales_email ?? data.email ?? NAVIRA_CONTACT.salesEmail,
+          general_email: data.general_email ?? NAVIRA_CONTACT.generalEmail,
+          accounts_email: data.accounts_email ?? NAVIRA_CONTACT.accountsEmail,
+          whatsapp: data.whatsapp ?? NAVIRA_CONTACT.whatsapp,
+          landline: data.landline ?? NAVIRA_CONTACT.phone1,
+          cell_number: data.cell_number ?? NAVIRA_CONTACT.phone2,
+          address: data.address ?? NAVIRA_CONTACT.address,
+          city: data.city ?? NAVIRA_CONTACT.city,
+          country: data.country ?? NAVIRA_CONTACT.country,
+          google_maps_url: data.google_maps_url ?? "",
+          weekday_hours: data.weekday_hours ?? "8:00 AM - 6:00 PM",
+          saturday_hours: data.saturday_hours ?? "8:00 AM - 4:00 PM",
+          sunday_hours: data.sunday_hours ?? "Closed",
+        });
+      }
+    } catch (error) {
       console.error("Error fetching company info:", error);
     } finally {
       setLoading(false);
@@ -91,15 +114,19 @@ const AdminCompanySettings = () => {
     setSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       const updateData = {
-        email: companyData.email,
+        email: companyData.sales_email || companyData.email,
+        sales_email: companyData.sales_email,
+        general_email: companyData.general_email,
+        accounts_email: companyData.accounts_email,
+        whatsapp: companyData.whatsapp,
         landline: companyData.landline,
         cell_number: companyData.cell_number,
         address: companyData.address,
         city: companyData.city,
         country: companyData.country,
-        google_maps_url: companyData.google_maps_url,
+        google_maps_url: companyData.google_maps_url || null,
         weekday_hours: companyData.weekday_hours,
         saturday_hours: companyData.saturday_hours,
         sunday_hours: companyData.sunday_hours,
@@ -108,26 +135,19 @@ const AdminCompanySettings = () => {
       };
 
       if (companyData.id) {
-        const { error } = await (supabase as any)
-          .from("company_info")
-          .update(updateData)
-          .eq("id", companyData.id);
+        const { error } = await supabase.from("company_info").update(updateData).eq("id", companyData.id);
         if (error) throw error;
       } else {
-        const { error } = await (supabase as any)
-          .from("company_info")
-          .insert(updateData);
+        const { error } = await supabase.from("company_info").insert(updateData);
         if (error) throw error;
       }
 
-      toast({
-        title: "Success",
-        description: "Company information updated successfully",
-      });
-    } catch (error: any) {
+      toast({ title: "Success", description: "Company information updated successfully" });
+      fetchCompanyInfo();
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: error.message || "Failed to update company info",
+        description: error instanceof Error ? error.message : "Failed to update company info",
         variant: "destructive",
       });
     } finally {
@@ -135,14 +155,14 @@ const AdminCompanySettings = () => {
     }
   };
 
-  const handleChange = (field: keyof CompanyData, value: string) => {
-    setCompanyData(prev => ({ ...prev, [field]: value }));
+  const handleChange = (field: keyof CompanyForm, value: string) => {
+    setCompanyData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card border-b border-border shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             <Wrench className="h-8 w-8 text-primary" />
             <div>
@@ -151,18 +171,17 @@ const AdminCompanySettings = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <ThemeToggle />
             <Button onClick={() => navigate("/dashboard")} variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Dashboard
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
+      <main className="container mx-auto max-w-2xl px-4 py-8">
         {loading ? (
-          <div className="text-center py-12 text-muted-foreground">Loading...</div>
+          <div className="py-12 text-center text-muted-foreground">Loading...</div>
         ) : (
           <Card>
             <CardHeader>
@@ -170,18 +189,46 @@ const AdminCompanySettings = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="sales_email">Sales email</Label>
                 <Input
-                  id="email"
+                  id="sales_email"
                   type="email"
-                  value={companyData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
+                  value={companyData.sales_email}
+                  onChange={(e) => handleChange("sales_email", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="general_email">General email</Label>
+                <Input
+                  id="general_email"
+                  type="email"
+                  value={companyData.general_email}
+                  onChange={(e) => handleChange("general_email", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="accounts_email">Accounts email</Label>
+                <Input
+                  id="accounts_email"
+                  type="email"
+                  value={companyData.accounts_email}
+                  onChange={(e) => handleChange("accounts_email", e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp">WhatsApp</Label>
+                <Input
+                  id="whatsapp"
+                  value={companyData.whatsapp}
+                  onChange={(e) => handleChange("whatsapp", e.target.value)}
+                  placeholder="+263..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="landline">Landline</Label>
+                  <Label htmlFor="landline">Phone 1</Label>
                   <Input
                     id="landline"
                     value={companyData.landline}
@@ -189,7 +236,7 @@ const AdminCompanySettings = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="cell_number">Cell Number</Label>
+                  <Label htmlFor="cell_number">Phone 2</Label>
                   <Input
                     id="cell_number"
                     value={companyData.cell_number}
@@ -210,11 +257,7 @@ const AdminCompanySettings = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    value={companyData.city}
-                    onChange={(e) => handleChange("city", e.target.value)}
-                  />
+                  <Input id="city" value={companyData.city} onChange={(e) => handleChange("city", e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="country">Country</Label>
@@ -236,8 +279,8 @@ const AdminCompanySettings = () => {
                 />
               </div>
 
-              <div className="pt-4 border-t border-border">
-                <h3 className="font-semibold mb-4">Business Hours</h3>
+              <div className="border-t border-border pt-4">
+                <h3 className="mb-4 font-semibold">Business Hours</h3>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="weekday_hours">Monday - Friday</Label>
@@ -245,7 +288,6 @@ const AdminCompanySettings = () => {
                       id="weekday_hours"
                       value={companyData.weekday_hours}
                       onChange={(e) => handleChange("weekday_hours", e.target.value)}
-                      placeholder="8:00 AM - 6:00 PM"
                     />
                   </div>
                   <div className="space-y-2">
@@ -254,7 +296,6 @@ const AdminCompanySettings = () => {
                       id="saturday_hours"
                       value={companyData.saturday_hours}
                       onChange={(e) => handleChange("saturday_hours", e.target.value)}
-                      placeholder="8:00 AM - 4:00 PM"
                     />
                   </div>
                   <div className="space-y-2">
@@ -263,14 +304,13 @@ const AdminCompanySettings = () => {
                       id="sunday_hours"
                       value={companyData.sunday_hours}
                       onChange={(e) => handleChange("sunday_hours", e.target.value)}
-                      placeholder="Closed"
                     />
                   </div>
                 </div>
               </div>
 
               <Button onClick={handleSave} disabled={saving} className="w-full">
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="mr-2 h-4 w-4" />
                 {saving ? "Saving..." : "Save Changes"}
               </Button>
             </CardContent>

@@ -29,7 +29,7 @@ CREATE POLICY "Admins can insert company info"
 
 -- Insert default company info
 INSERT INTO public.company_info (email, landline, cell_number, address, city, country)
-VALUES ('info@navirahardware.com', '+1-555-0100', '+1-555-0101', '123 Hardware Street', 'Harare', 'Zimbabwe');
+VALUES ('sales@navirahardware.co.zw', '+263774740730', '+263713712204', 'Chillarz Complex, Westwood Drive, Westwood', 'Harare', 'Zimbabwe');
 
 -- Add status column to sales table for order tracking
 ALTER TABLE public.sales ADD COLUMN IF NOT EXISTS status text DEFAULT 'pending';

@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Wrench, LogOut, Package, ShoppingCart, Users, Clock, User as UserIcon, Globe, RotateCcw, Settings } from "lucide-react";
+import { LogOut, Package, ShoppingCart, Users, Clock, User as UserIcon, Globe, RotateCcw, Settings } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 import StockAlerts from "@/components/StockAlerts";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import SalesHistory from "@/components/SalesHistory";
 import OnlineSalesWidget from "@/components/OnlineSalesWidget";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { fetchStaffRole, isStaffRole } from "@/lib/staff";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -36,13 +37,13 @@ const Dashboard = () => {
       return;
     }
 
-    const { data: roleData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", session.user.id)
-      .single();
+    const role = await fetchStaffRole(session.user.id);
+    if (!isStaffRole(role)) {
+      navigate("/shop");
+      return;
+    }
 
-    setUserRole(roleData?.role || null);
+    setUserRole(role);
   };
 
   const handleLogout = async () => {
@@ -70,36 +71,37 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="bg-card border-b border-border shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Wrench className="h-8 w-8 text-primary" />
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">NAVIRA HARDWARE</h1>
-              <p className="text-sm text-muted-foreground">Professional Management System</p>
-            </div>
+      <header className="sticky top-0 z-50 border-b border-border bg-card shadow-sm">
+        <div className="container mx-auto flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:py-4">
+          <div className="min-w-0">
+            <BrandLogo size="sm" className="sm:hidden" />
+            <BrandLogo size="md" className="hidden sm:flex" />
+            <p className="mt-0.5 truncate text-sm text-muted-foreground">Professional Management System</p>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="text-right hidden md:block">
-              <div className="flex items-center gap-2 text-primary font-mono text-2xl font-bold">
+          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
+            <div className="hidden text-right md:block">
+              <div className="flex items-center justify-end gap-2 font-mono text-2xl font-bold text-primary">
                 <Clock className="h-6 w-6" />
                 {formatTime(currentTime)}
               </div>
               <p className="text-sm text-muted-foreground">{formatDate(currentTime)}</p>
             </div>
-            <ThemeToggle />
-            <Button
-              onClick={() => navigate("/profile")}
-              variant="outline"
-            >
-              <UserIcon className="h-4 w-4 mr-2" />
+            <div className="flex items-center gap-1 font-mono text-sm font-semibold text-primary md:hidden">
+              <Clock className="h-4 w-4" />
+              {formatTime(currentTime)}
+            </div>
+            <Button onClick={() => navigate("/profile")} variant="outline" size="icon" className="sm:hidden" aria-label="Profile">
+              <UserIcon className="h-4 w-4" />
+            </Button>
+            <Button onClick={() => navigate("/profile")} variant="outline" className="hidden sm:inline-flex">
+              <UserIcon className="mr-2 h-4 w-4" />
               Profile
             </Button>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
+            <Button onClick={handleLogout} variant="outline" size="icon" className="sm:hidden" aria-label="Logout">
+              <LogOut className="h-4 w-4" />
+            </Button>
+            <Button onClick={handleLogout} variant="outline" className="hidden sm:inline-flex">
+              <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
           </div>
@@ -128,7 +130,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {userRole === "employee" && (
+          {(userRole === "admin" || userRole === "employee") && (
             <Card 
               className="hover:border-green-500 transition-all cursor-pointer group"
               onClick={() => navigate("/sales")}

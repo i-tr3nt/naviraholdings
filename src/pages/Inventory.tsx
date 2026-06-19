@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Wrench, LogOut, Home } from "lucide-react";
 import InventoryManagement from "@/components/InventoryManagement";
+import { fetchStaffRole, isStaffRole } from "@/lib/staff";
 
 const Inventory = () => {
   const navigate = useNavigate();
@@ -15,19 +16,19 @@ const Inventory = () => {
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
       navigate("/auth");
       return;
     }
 
-    const { data: roleData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", session.user.id)
-      .single();
+    const role = await fetchStaffRole(session.user.id);
+    if (!isStaffRole(role)) {
+      navigate("/shop");
+      return;
+    }
 
-    setUserRole(roleData?.role || null);
+    setUserRole(role);
   };
 
   const handleLogout = async () => {

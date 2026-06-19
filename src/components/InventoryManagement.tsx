@@ -157,8 +157,8 @@ const InventoryManagement = ({ userRole }: InventoryManagementProps) => {
     setOpen(true);
   };
 
-  const canEdit = userRole === "ceo" || userRole === "employee";
-  const canDelete = userRole === "ceo";
+  const canEdit = userRole === "admin" || userRole === "employee";
+  const canDelete = userRole === "admin";
 
   return (
     <Card className="border-2 border-hardware-steel/20">

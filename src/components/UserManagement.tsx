@@ -74,16 +74,16 @@ const UserManagement = () => {
         return;
       }
 
-      const { data, error: queryError } = await supabase.auth.admin.listUsers();
-      
-      if (queryError) throw queryError;
+      const { data: userId, error: lookupError } = await supabase.rpc("get_user_id_by_email", {
+        _email: email.trim(),
+      });
 
-      const user = data.users.find((u: any) => u.email === email);
-      
-      if (!user) {
+      if (lookupError) throw lookupError;
+
+      if (!userId) {
         toast({
           title: "Error",
-          description: "User with this email not found.",
+          description: "No account found with this email. The user must sign up first.",
           variant: "destructive",
         });
         return;
@@ -91,7 +91,7 @@ const UserManagement = () => {
 
       const { error } = await supabase
         .from("user_roles")
-        .insert([{ user_id: user.id, role: role as "admin" | "employee" }]);
+        .insert([{ user_id: userId, role: role as "admin" | "employee" }]);
 
       if (error) throw error;
 

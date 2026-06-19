@@ -69,6 +69,13 @@ export default {
           dark: "hsl(var(--hardware-dark))",
           light: "hsl(var(--hardware-light))",
         },
+        navira: {
+          navy: "hsl(var(--navira-navy))",
+          "navy-light": "hsl(var(--navira-navy-light))",
+          red: "hsl(var(--navira-red))",
+          cream: "hsl(var(--navira-cream))",
+          gold: "hsl(var(--navira-gold))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

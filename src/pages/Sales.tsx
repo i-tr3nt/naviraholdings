@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Wrench, LogOut, Home } from "lucide-react";
 import SalesPoint from "@/components/SalesPoint";
+import { fetchStaffRole, isStaffRole } from "@/lib/staff";
 
 const Sales = () => {
   const navigate = useNavigate();
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -15,19 +16,19 @@ const Sales = () => {
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
       navigate("/auth");
       return;
     }
 
-    const { data: roleData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", session.user.id)
-      .single();
+    const role = await fetchStaffRole(session.user.id);
+    if (!isStaffRole(role)) {
+      navigate("/shop");
+      return;
+    }
 
-    setUserRole(roleData?.role || null);
+    setAuthorized(true);
   };
 
   const handleLogout = async () => {
@@ -68,7 +69,7 @@ const Sales = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <SalesPoint />
+        {authorized && <SalesPoint />}
       </main>
     </div>
   );

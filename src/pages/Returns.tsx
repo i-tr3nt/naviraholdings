@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Wrench, ArrowLeft, RefreshCw, CheckCircle, XCircle, Clock, Shield } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { formatCurrency } from "@/lib/currency";
 import {
   Table,
@@ -67,7 +66,7 @@ const Returns = () => {
       .single();
 
     if (!roleData || (roleData.role !== "admin" && roleData.role !== "employee")) {
-      navigate("/dashboard");
+      navigate("/shop");
     }
   };
 
@@ -158,7 +157,6 @@ const Returns = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <ThemeToggle />
             <Button onClick={() => navigate("/dashboard")} variant="outline">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Dashboard

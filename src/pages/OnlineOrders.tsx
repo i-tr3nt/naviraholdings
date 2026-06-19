@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Wrench, ArrowLeft, Package, CheckCircle, Clock, XCircle, RefreshCw } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { formatCurrency } from "@/lib/currency";
 import {
   Table,
@@ -41,6 +40,8 @@ interface SaleItem {
   quantity: number;
   unit_price: number;
   subtotal: number;
+  customer_notes?: string | null;
+  is_catalog_line?: boolean | null;
 }
 
 const OnlineOrders = () => {
@@ -71,7 +72,7 @@ const OnlineOrders = () => {
       .single();
 
     if (!roleData || (roleData.role !== "admin" && roleData.role !== "employee")) {
-      navigate("/dashboard");
+      navigate("/shop");
     }
   };
 
@@ -174,7 +175,6 @@ const OnlineOrders = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <ThemeToggle />
             <Button onClick={() => navigate("/dashboard")} variant="outline">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Dashboard
@@ -285,7 +285,21 @@ const OnlineOrders = () => {
                   <TableBody>
                     {orderItems.map((item) => (
                       <TableRow key={item.id}>
-                        <TableCell>{item.item_name}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span>{item.item_name}</span>
+                            {item.is_catalog_line && (
+                              <Badge variant="outline" className="text-xs">
+                                Catalogue request
+                              </Badge>
+                            )}
+                          </div>
+                          {item.customer_notes && (
+                            <p className="mt-1 text-xs text-muted-foreground italic">
+                              {item.customer_notes}
+                            </p>
+                          )}
+                        </TableCell>
                         <TableCell>{item.quantity}</TableCell>
                         <TableCell>{formatCurrency(item.unit_price)}</TableCell>
                         <TableCell>{formatCurrency(item.subtotal)}</TableCell>

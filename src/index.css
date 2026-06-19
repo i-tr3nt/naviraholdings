@@ -2,111 +2,115 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* NAVIRA Hardware brand — from business card (navy, red, cream) */
 
 @layer base {
   :root {
-    /* LIGHT MODE - Clean, bright, modern */
-    --background: 0 0% 100%;
-    --foreground: 220 15% 20%;
+    /* Brand tokens */
+    --navira-navy: 218 55% 20%;
+    --navira-navy-light: 218 40% 32%;
+    --navira-red: 356 78% 46%;
+    --navira-red-dark: 356 75% 38%;
+    --navira-cream: 40 28% 97%;
+    --navira-cream-muted: 40 18% 92%;
+    --navira-gold: 32 42% 40%;
+
+    /* LIGHT — cream card / letterhead feel */
+    --background: var(--navira-cream);
+    --foreground: var(--navira-navy);
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 20%;
+    --card-foreground: var(--navira-navy);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 20%;
+    --popover-foreground: var(--navira-navy);
 
-    --primary: 220 90% 56%;
+    --primary: var(--navira-navy);
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 15% 96%;
-    --secondary-foreground: 220 15% 30%;
+    --secondary: var(--navira-cream-muted);
+    --secondary-foreground: var(--navira-navy);
 
-    --muted: 220 15% 95%;
-    --muted-foreground: 220 10% 50%;
+    --muted: var(--navira-cream-muted);
+    --muted-foreground: 218 20% 42%;
 
-    --accent: 38 95% 55%;
-    --accent-foreground: 220 15% 15%;
+    --accent: var(--navira-red);
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 90%;
-    --input: 220 15% 92%;
-    --ring: 220 90% 56%;
+    --border: 218 22% 88%;
+    --input: 218 18% 90%;
+    --ring: var(--navira-red);
 
     --radius: 0.5rem;
 
-    --hardware-steel: 220 10% 45%;
-    --hardware-metal: 220 10% 65%;
-    --hardware-orange: 38 95% 55%;
-    --hardware-yellow: 45 100% 55%;
-    --hardware-dark: 220 15% 20%;
-    --hardware-light: 220 15% 92%;
+    --hardware-steel: var(--navira-navy-light);
+    --hardware-metal: 218 15% 62%;
+    --hardware-orange: var(--navira-red);
+    --hardware-yellow: var(--navira-gold);
+    --hardware-dark: var(--navira-navy);
+    --hardware-light: var(--navira-cream-muted);
 
-    --success: 142 76% 36%;
+    --success: 152 55% 38%;
     --success-foreground: 0 0% 100%;
 
-    --sidebar-background: 220 20% 18%;
-    --sidebar-foreground: 220 15% 95%;
-    --sidebar-primary: 220 90% 56%;
+    --sidebar-background: var(--navira-navy);
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: var(--navira-red);
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 28%;
-    --sidebar-accent-foreground: 220 15% 95%;
-    --sidebar-border: 220 20% 28%;
-    --sidebar-ring: 220 90% 56%;
+    --sidebar-accent: 218 45% 28%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 218 40% 28%;
+    --sidebar-ring: var(--navira-red);
   }
 
   .dark {
-    /* DARK MODE - Deep teal/slate professional industrial */
-    --background: 200 25% 10%;
-    --foreground: 185 15% 95%;
+    /* DARK — business card front (navy field, white & red type) */
+    --background: 218 52% 11%;
+    --foreground: 0 0% 98%;
 
-    --card: 200 25% 13%;
-    --card-foreground: 185 15% 95%;
+    --card: 218 48% 15%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 200 25% 13%;
-    --popover-foreground: 185 15% 95%;
+    --popover: 218 48% 15%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 175 70% 45%;
-    --primary-foreground: 200 25% 10%;
+    --primary: var(--navira-red);
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 20% 20%;
-    --secondary-foreground: 185 15% 95%;
+    --secondary: 218 42% 20%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 200 20% 18%;
-    --muted-foreground: 185 10% 60%;
+    --muted: 218 40% 18%;
+    --muted-foreground: 218 15% 68%;
 
-    --accent: 175 70% 45%;
-    --accent-foreground: 200 25% 10%;
+    --accent: 0 0% 100%;
+    --accent-foreground: var(--navira-navy);
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 200 20% 22%;
-    --input: 200 20% 20%;
-    --ring: 175 70% 45%;
+    --border: 218 35% 24%;
+    --input: 218 35% 22%;
+    --ring: var(--navira-red);
 
-    --hardware-steel: 200 15% 40%;
-    --hardware-metal: 200 20% 55%;
-    --hardware-orange: 175 70% 45%;
-    --hardware-yellow: 55 90% 55%;
-    --hardware-dark: 200 25% 8%;
-    --hardware-light: 185 15% 80%;
+    --hardware-steel: 218 30% 55%;
+    --hardware-metal: 218 20% 45%;
+    --hardware-orange: var(--navira-red);
+    --hardware-yellow: 38 50% 55%;
+    --hardware-dark: 218 55% 8%;
+    --hardware-light: 218 15% 78%;
 
-    --success: 160 70% 40%;
-    --success-foreground: 0 0% 100%;
-
-    --sidebar-background: 200 25% 8%;
-    --sidebar-foreground: 185 15% 95%;
-    --sidebar-primary: 175 70% 45%;
-    --sidebar-primary-foreground: 200 25% 10%;
-    --sidebar-accent: 200 20% 18%;
-    --sidebar-accent-foreground: 185 15% 95%;
-    --sidebar-border: 200 20% 18%;
-    --sidebar-ring: 175 70% 45%;
+    --sidebar-background: 218 55% 8%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: var(--navira-red);
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 218 45% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 218 40% 20%;
+    --sidebar-ring: var(--navira-red);
   }
 }
 
@@ -116,7 +120,40 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer components {
+  .brand-wordmark {
+    @apply font-bold tracking-tight leading-none;
+  }
+
+  .brand-wordmark-navira {
+    color: hsl(var(--navira-navy));
+  }
+
+  .dark .brand-wordmark-navira {
+    color: hsl(0 0% 100%);
+  }
+
+  .brand-wordmark-hardware {
+    color: hsl(var(--navira-red));
+  }
+
+  .brand-hero {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--navira-navy)) 0%,
+      hsl(218 50% 14%) 50%,
+      hsl(218 55% 18%) 100%
+    );
+  }
+
+  .brand-logo-mark {
+    @apply flex items-center justify-center rounded-full font-bold text-white;
+    background: hsl(var(--navira-navy));
+    border: 2px solid hsl(0 0% 100% / 0.15);
   }
 }
 
@@ -124,8 +161,24 @@ All colors MUST be HSL.
   .gradient-hardware {
     @apply bg-gradient-to-br from-background via-muted to-secondary;
   }
-  
+
   .gradient-dark {
     @apply bg-gradient-to-br from-background via-card to-muted;
+  }
+
+  .text-brand-red {
+    color: hsl(var(--navira-red));
+  }
+
+  .text-brand-navy {
+    color: hsl(var(--navira-navy));
+  }
+
+  .bg-brand-navy {
+    background-color: hsl(var(--navira-navy));
+  }
+
+  .bg-brand-red {
+    background-color: hsl(var(--navira-red));
   }
 }

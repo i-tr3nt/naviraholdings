@@ -1,11 +1,11 @@
 # Deploying NAVIRA HARDWARE on Render
 
-This guide will help you deploy the NAVIRA HARDWARE application on Render.
+**Full guide (Supabase + Render together):** see [docs/SETUP-SUPABASE-AND-RENDER.md](docs/SETUP-SUPABASE-AND-RENDER.md)
 
 ## Prerequisites
 
 1. A Render account (sign up at https://render.com)
-2. Your Supabase credentials (from your `.env` file)
+2. A **live** Supabase project (create free at https://supabase.com/dashboard) — see setup guide above
 
 ## Deployment Steps
 
