@@ -3,21 +3,32 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 import { getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase-env";
 
-const { url: SUPABASE_URL, key: SUPABASE_PUBLISHABLE_KEY } = getSupabaseConfig();
+const { url, key } = getSupabaseConfig();
 
-if (!isSupabaseConfigured()) {
+/** Valid-looking placeholders so createClient never throws at import (blank screen on Render). */
+const FALLBACK_URL = "https://placeholder.supabase.co";
+const FALLBACK_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.placeholder";
+
+const configured = isSupabaseConfigured();
+
+if (!configured) {
   console.error(
-    "[Supabase] Missing or invalid VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY. " +
-      "Copy .env.example to .env and use values from Supabase → Settings → API."
+    "[Supabase] Missing or invalid VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY at build time. " +
+      "Set them in Render Environment and redeploy with a fresh build."
   );
 }
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
+export const supabase = createClient<Database>(
+  configured ? url : FALLBACK_URL,
+  configured ? key : FALLBACK_KEY,
+  {
+    auth: {
+      storage: localStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  }
+);
 
 export { isSupabaseConfigured };

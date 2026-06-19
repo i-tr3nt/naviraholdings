@@ -62,8 +62,13 @@ If you prefer using the `render.yaml` file:
 
 ### Environment Variables Not Working
 - Make sure variable names start with `VITE_` (required for Vite)
-- Restart the service after adding new environment variables
-- Rebuild the service if variables were added after initial deployment
+- Add all three variables **before** the first deploy (or redeploy after adding them)
+- After adding variables: **Manual Deploy → Clear build cache & deploy** (Vite bakes env into the JS at build time)
+- If the site shows "Site configuration incomplete", the build ran without Supabase keys
+
+### Blank white page
+- Usually missing `VITE_SUPABASE_*` at **build** time (see above)
+- Add SPA rewrite: `/*` → `/index.html` (Rewrite) under Redirects/Rewrites
 
 ## Post-Deployment
 
